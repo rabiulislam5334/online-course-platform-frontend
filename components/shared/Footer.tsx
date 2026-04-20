@@ -1,11 +1,13 @@
-import Link from 'next/link';
-import { BookOpen,Heart, X } from 'lucide-react';
+'use client';
 
+import Link from 'next/link';
+// Github এবং Linkedin ইমপোর্ট করা হয়েছে
+ import { Github, Linkedin, X } from 'lucide-react';
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const socialLinks = [
-    { Icon: Github, href: '#', label: 'Github' },
+   { Icon: Github, href: '#', label: 'Github' },
     { Icon: X, href: '#', label: 'Twitter' },
     { Icon: Linkedin, href: '#', label: 'Linkedin' },
   ];
@@ -35,7 +37,7 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 mb-12">
           
-          {/* Brand Section - Takes 2 columns on large screens */}
+          {/* Brand Section */}
           <div className="lg:col-span-2 space-y-6">
             <Link href="/" className="flex items-center gap-2.5 group w-fit">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 border border-primary/20 group-hover:bg-primary/20 transition-colors">
@@ -87,7 +89,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Tech Stack / Info */}
+          {/* Tech Stack */}
           <div className="space-y-5">
             <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/70">Tech Stack</h4>
             <ul className="space-y-3">
