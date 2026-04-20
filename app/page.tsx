@@ -6,11 +6,12 @@ import { Navbar, Footer } from '@/components/shared';
 
 // Home Components
 
+
+import { CTA } from '@/components/home/CTA';
+import { Hero } from '@/components/home/Hero';
 import { Features } from '@/components/home/Features';
 import { Stats } from '@/components/home/Stats';
 import { HowItWorks } from '@/components/home/HowItWorks';
-import { CTA } from '@/components/home/CTA';
-import { Hero } from '@/components/home/Hero';
 
 export default function HomePage() {
   const { user } = useAuthStore();
