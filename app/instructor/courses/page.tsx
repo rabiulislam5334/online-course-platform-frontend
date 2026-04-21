@@ -188,7 +188,7 @@ export default function InstructorCoursesPage() {
           <div className="space-y-2">
             <Label>Description</Label>
             <Textarea 
-              {register('description')} 
+              {...register('description')}
               placeholder="What will students learn in this course?" 
               rows={4} 
               className="resize-none"
