@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 
-// Shared Components - নিশ্চিত করুন পাথগুলো সঠিক আছে
+
 import { StatCard, PageHeader, StatusBadge, DataTable } from '@/components/shared';
 
 export default function AdminDashboard() {
