@@ -2,14 +2,14 @@
 
 import Link from 'next/link';
 // Github এবং Linkedin ইমপোর্ট করা হয়েছে
- import { Github, Linkedin, X } from 'lucide-react';
+import { BookOpen, GitBranch, Heart, LinkIcon, X } from 'lucide-react';
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const socialLinks = [
-   { Icon: Github, href: '#', label: 'Github' },
+   { Icon: GitBranch, href: '#', label: 'Github' },
     { Icon: X, href: '#', label: 'Twitter' },
-    { Icon: Linkedin, href: '#', label: 'Linkedin' },
+    { Icon: LinkIcon, href: '#', label: 'Linkedin' },
   ];
 
   const platformLinks = [
