@@ -4,13 +4,12 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
-import { Search, CheckCircle, XCircle, EyeOff, MoreHorizontal } from 'lucide-react';
+import { Search, CheckCircle, XCircle, EyeOff, MoreHorizontal, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-// Assuming you have a reusable Modal/Dialog component
 import { Modal } from '@/components/ui/modal'; 
 import { Spinner } from '@/components/ui/spinner';
 
@@ -22,7 +21,6 @@ const statusVariants: Record<string, "success" | "outline" | "warning" | "destru
   unpublished: 'secondary' 
 };
 
-
 export default function AdminCoursesPage() {
   const qc = useQueryClient();
   const [search, setSearch] = useState('');
@@ -30,14 +28,18 @@ export default function AdminCoursesPage() {
   const [rejectModal, setRejectModal] = useState<{id: number; title: string} | null>(null);
   const [remark, setRemark] = useState('');
 
-  // Fetch Courses
-  const { data, isLoading } = useQuery({
+  // 1. Fetch Courses with Data Normalization
+  const { data: rawData, isLoading } = useQuery({
     queryKey: ['admin-courses', search, status],
     queryFn: async () => {
       const response = await api.get('/courses/admin/all', { params: { search, status } });
       return response.data.data;
     },
   });
+
+  // ডাটা যদি অবজেক্টের ভেতর থাকে (যেমন pagination থাকলে), তবে তা বের করে আনা
+  const courses = Array.isArray(rawData) ? rawData : (rawData?.courses || []);
+  const totalCount = Array.isArray(rawData) ? rawData.length : (rawData?.total || courses.length);
 
   // Mutations
   const approve = useMutation({
@@ -74,7 +76,7 @@ export default function AdminCoursesPage() {
     <div className="space-y-6 animate-fade-in p-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-foreground">Course Oversight</h1>
-        <Badge variant="outline" className="px-3 py-1">{data?.length || 0} Total Courses</Badge>
+        <Badge variant="outline" className="px-3 py-1">{totalCount} Total Courses</Badge>
       </div>
 
       {/* Filters */}
@@ -119,12 +121,17 @@ export default function AdminCoursesPage() {
                     <td colSpan={5} className="px-4 py-4"><Skeleton className="h-10 w-full rounded-md" /></td>
                   </tr>
                 ))
-              ) : data?.length === 0 ? (
+              ) : courses.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-20 text-center text-muted-foreground">No courses found matching your criteria.</td>
+                  <td colSpan={5} className="px-4 py-20 text-center text-muted-foreground">
+                    <div className="flex flex-col items-center gap-2">
+                      <AlertCircle className="h-8 w-8 text-muted-foreground/50" />
+                      <p>No courses found matching your criteria.</p>
+                    </div>
+                  </td>
                 </tr>
               ) : (
-                data?.map((c: any) => (
+                courses.map((c: any) => (
                   <tr key={c.id} className="hover:bg-muted/20 transition-colors group">
                     <td className="px-4 py-4">
                       <p className="font-semibold text-foreground truncate max-w-[200px]">{c.title}</p>
@@ -132,13 +139,13 @@ export default function AdminCoursesPage() {
                         <span>{c.difficulty}</span> • <span>{c.price === 0 ? 'Free' : `$${c.price}`}</span>
                       </span>
                     </td>
-                    <td className="px-4 py-4 text-muted-foreground">{c.instructor_name}</td>
+                    <td className="px-4 py-4 text-muted-foreground">{c.instructor_name || 'Unknown'}</td>
                     <td className="px-4 py-4">
                       <Badge variant="secondary" className="font-normal">{c.category || 'N/A'}</Badge>
                     </td>
                     <td className="px-4 py-4">
                       <Badge variant={statusVariants[c.status] || 'outline'}>
-                        {c.status.replace('_', ' ')}
+                        {(c.status || 'unknown').replace('_', ' ')}
                       </Badge>
                     </td>
                     <td className="px-4 py-4">
@@ -148,9 +155,10 @@ export default function AdminCoursesPage() {
                             <Button 
                               size="icon" variant="ghost" 
                               onClick={() => approve.mutate(c.id)}
+                              disabled={approve.isPending}
                               className="h-8 w-8 text-emerald-500 hover:bg-emerald-500/10"
                             >
-                              <CheckCircle className="h-4 w-4" />
+                              {approve.isPending ? <Spinner size="sm" /> : <CheckCircle className="h-4 w-4" />}
                             </Button>
                             <Button 
                               size="icon" variant="ghost" 
@@ -192,7 +200,6 @@ export default function AdminCoursesPage() {
         <div className="space-y-4 pt-4">
           <p className="text-sm text-muted-foreground">
             Provide feedback for <span className="font-bold text-foreground">{rejectModal?.title}</span>. 
-            The instructor will see this remark.
           </p>
           <textarea 
             value={remark} 
@@ -209,7 +216,7 @@ export default function AdminCoursesPage() {
               disabled={reject.isPending || !remark.trim()}
               className="min-w-[100px]"
             >
-              {reject.isPending ? <Spinner className="mr-2" /> : 'Confirm Reject'}
+              {reject.isPending ? <Spinner /> : 'Confirm Reject'}
             </Button>
           </div>
         </div>

@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { BookOpen, LogOut, Menu} from 'lucide-react';
+import { BookOpen, LogOut, Menu } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import toast from 'react-hot-toast';
 import { cn } from '@/lib/utils';
@@ -35,7 +35,7 @@ interface DashboardLayoutProps {
   roleColor: string; 
 }
 
-// 1. Sidebar Content Component (Main function er baire define kora hoyeche)
+// 1. Sidebar Content Component
 const SidebarContent = ({ 
   nav, 
   pathname, 
@@ -47,8 +47,11 @@ const SidebarContent = ({
   roleColor 
 }: SidebarProps) => (
   <div className="flex h-full flex-col bg-card border-r border-border w-64 shadow-sm">
-    {/* Logo Area */}
-    <div className="flex items-center gap-3 px-6 py-5 border-b border-border/50">
+    {/* Logo Area - Link add kora hoyeche jate home page e ney */}
+    <Link 
+      href="/" 
+      className="flex items-center gap-3 px-6 py-5 border-b border-border/50 hover:bg-secondary/30 transition-colors"
+    >
       <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
         <BookOpen className="h-5 w-5 text-primary" />
       </div>
@@ -58,7 +61,7 @@ const SidebarContent = ({
           {roleLabel}
         </p>
       </div>
-    </div>
+    </Link>
 
     {/* Navigation Links */}
     <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
@@ -123,14 +126,14 @@ const SidebarContent = ({
 export default function DashboardLayout({ children, nav, roleLabel, roleColor }: DashboardLayoutProps) {
   const { user, logout } = useAuthStore();
   const pathname = usePathname();
-  const router = useRouter();
   const [open, setOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
       await logout();
       toast.success('Logged out successfully');
-      router.push('/auth/login');
+      // Hard redirect jate state clear hoye login ba home page e ney
+      window.location.href = '/'; 
     } catch (error) {
       toast.error('Logout failed');
     }
@@ -145,7 +148,7 @@ export default function DashboardLayout({ children, nav, roleLabel, roleColor }:
 
   return (
     <div className="flex h-screen bg-background overflow-hidden font-sans">
-      {/* Desktop Sidebar (Permanent) */}
+      {/* Desktop Sidebar */}
       <aside className="hidden md:flex shrink-0">
         <SidebarContent 
           nav={nav} 
@@ -159,13 +162,10 @@ export default function DashboardLayout({ children, nav, roleLabel, roleColor }:
         />
       </aside>
 
-      {/* Mobile Sidebar Overlay (Dynamic) */}
+      {/* Mobile Sidebar Overlay */}
       {open && (
         <div className="fixed inset-0 z-50 md:hidden bg-background/80 backdrop-blur-sm transition-all duration-300">
-          <div 
-            className="absolute inset-0" 
-            onClick={() => setOpen(false)} 
-          />
+          <div className="absolute inset-0" onClick={() => setOpen(false)} />
           <div className="relative z-10 h-full w-fit animate-in slide-in-from-left duration-300">
             <SidebarContent 
               nav={nav} 
@@ -189,10 +189,11 @@ export default function DashboardLayout({ children, nav, roleLabel, roleColor }:
             <Button variant="ghost" size="icon" onClick={() => setOpen(true)} className="-ml-2">
               <Menu className="h-5 w-5 text-muted-foreground" />
             </Button>
-            <div className="flex items-center gap-2">
+            {/* Mobile Logo Link */}
+            <Link href="/" className="flex items-center gap-2">
               <BookOpen className="h-4 w-4 text-primary" />
               <span className="text-sm font-bold tracking-tight text-foreground">Skillora</span>
-            </div>
+            </Link>
           </div>
         </header>
 

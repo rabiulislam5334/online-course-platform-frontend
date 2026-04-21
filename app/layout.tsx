@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { TooltipProvider } from "@/components/ui/tooltip"; // Tooltip provider import
+import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 import Providers from "@/components/Providers";
 
@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Skillora | Learning Platform", // Apnar project name onujayi change kora hoyeche
+  title: "Skillora | Learning Platform",
   description: "Next-generation course platform",
 };
 
@@ -28,15 +28,17 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-      suppressHydrationWarning // Theme optimization-er jonno eta dewa bhalo
+      suppressHydrationWarning={true} 
     >
-      <body className="min-h-full flex flex-col">
+      <body 
+        className="min-h-full flex flex-col" 
+        suppressHydrationWarning={true}
+      >
         <Providers>
           <TooltipProvider delayDuration={300}>
-          {children}
-        </TooltipProvider>
+            {children}
+          </TooltipProvider>
         </Providers>
-        
       </body>
     </html>
   );
